@@ -18,6 +18,13 @@ chmod +x install-edge.sh
 
 Then open **http://127.0.0.1:9191** (or the URL printed by `edge install`).
 
+If the website is not reachable yet, the same script is:
+
+```bash
+curl -fsSL -o install-edge.sh \
+  https://raw.githubusercontent.com/tvangundy/portico-edge-dist/main/install-edge.sh
+```
+
 Onboarding checklist: [web.porticoworks.dev/download](https://web.porticoworks.dev/download/).
 
 ## What’s in a release
