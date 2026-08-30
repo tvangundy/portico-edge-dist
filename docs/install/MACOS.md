@@ -27,11 +27,11 @@ chmod +x install-edge.sh
 **Option B — manual**
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
-2. Download `ws-edge_*_darwin_arm64.tar.gz` or `ws-edge_*_darwin_amd64.tar.gz`
+2. Download `edge_*_darwin_arm64.tar.gz` or `edge_*_darwin_amd64.tar.gz`
 3. Extract and place the `edge` binary somewhere on your PATH:
 
 ```bash
-tar -xzf ws-edge_*_darwin_*.tar.gz
+tar -xzf edge_*_darwin_*.tar.gz
 chmod +x edge
 # If macOS blocks the binary (Gatekeeper):
 xattr -d com.apple.quarantine edge 2>/dev/null || true
@@ -52,12 +52,12 @@ echo "Installing sudoers for ${MAC_USER}"
 echo "  wg:      ${WG}"
 echo "  dnsmasq: ${DNSMASQ}"
 
-sudo tee /etc/sudoers.d/ws-edge <<EOF
+sudo tee /etc/sudoers.d/edge <<EOF
 # PME Edge — passwordless wg, dnsmasq, pf
 ${MAC_USER} ALL=(root) NOPASSWD: ${WG}, ${DNSMASQ}, /sbin/pfctl, /usr/sbin/sysctl, /bin/cp, /bin/cat, /bin/kill, /sbin/route
 EOF
-sudo chmod 440 /etc/sudoers.d/ws-edge
-sudo visudo -c -f /etc/sudoers.d/ws-edge
+sudo chmod 440 /etc/sudoers.d/edge
+sudo visudo -c -f /etc/sudoers.d/edge
 ```
 
 Validate:
@@ -93,15 +93,15 @@ edge doctor
 
 ## 5. Optional — launchd (always-on)
 
-The release archive includes `packaging/launchd/com.ws.edge.plist`. After installing `edge` to `/usr/local/bin/edge`:
+The release archive includes `packaging/launchd/com.portico.edge.plist`. After installing `edge` to `/usr/local/bin/edge`:
 
 ```bash
 # Add EnvironmentVariables for EDGE_DATA_DIR and PME_RELAY_ENABLED in the plist, then:
-sudo cp packaging/launchd/com.ws.edge.plist /Library/LaunchDaemons/
-sudo launchctl load /Library/LaunchDaemons/com.ws.edge.plist
+sudo cp packaging/launchd/com.portico.edge.plist /Library/LaunchDaemons/
+sudo launchctl load /Library/LaunchDaemons/com.portico.edge.plist
 ```
 
-Prefer a user LaunchAgent if you want Edge to run only when you are logged in. Several Homes on one Mac: `task edge:new -- --target launchd --name cabin` (label `com.ws.edge.<name>`).
+Prefer a user LaunchAgent if you want Edge to run only when you are logged in. Several Homes on one Mac: unique labels such as `com.portico.edge.cabin` and separate data directories.
 
 ## Troubleshooting
 

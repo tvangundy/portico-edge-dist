@@ -31,11 +31,11 @@ sudo ./install-edge.sh -o /usr/local/bin
 **Option B — manual**
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
-2. Download `ws-edge_*_linux_amd64.tar.gz` or `ws-edge_*_linux_arm64.tar.gz`
+2. Download `edge_*_linux_amd64.tar.gz` or `edge_*_linux_arm64.tar.gz`
 3. Install the binary:
 
 ```bash
-tar -xzf ws-edge_*_linux_*.tar.gz
+tar -xzf edge_*_linux_*.tar.gz
 chmod +x edge
 sudo mv edge /usr/local/bin/edge
 ```
@@ -85,7 +85,7 @@ sudo edge uninstall          # stop/disable unit; keep data and env
 sudo edge uninstall --purge  # also remove env, binary, and data dir
 ```
 
-Several Homes on one host: install `packaging/systemd/edge@.service` and use `/etc/default/edge-<name>` with `systemctl enable --now edge@garage`. Operator path: `task edge:new -- --target systemd --host user@host` in ws-edge. Homelab Incus: [INCUS.md](./INCUS.md).
+Several Homes on one host: install `packaging/systemd/edge@.service` and use `/etc/default/edge-<name>` with `systemctl enable --now edge@garage`. Homelab Incus: [INCUS.md](./INCUS.md).
 
 ## Troubleshooting
 

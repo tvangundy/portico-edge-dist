@@ -64,7 +64,7 @@ incus exec portico-edge -- edge uninstall          # stop/disable unit; keep dat
 incus exec portico-edge -- edge uninstall --purge  # also remove env, binary, data dir
 ```
 
-Destroy the container with Incus (`incus delete --force portico-edge`). Operator factory Homes still use `task edge:down` in ws-edge.
+Destroy the container with Incus (`incus delete --force portico-edge`).
 
 ## Operator note
 

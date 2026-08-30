@@ -102,15 +102,21 @@ arch = os.environ["EDGE_ARCH"]
 use_api = os.environ.get("EDGE_USE_API_ASSET") == "1"
 data = json.load(sys.stdin)
 needle = f"_{os_name}_{arch}.tar.gz"
-for a in data.get("assets") or []:
-    name = a.get("name") or ""
-    if name.startswith("ws-edge_") and name.endswith(needle):
-        if use_api:
-            print(a["url"])
-        else:
-            print(a["browser_download_url"])
-        sys.exit(0)
-print("available assets:", [a.get("name") for a in (data.get("assets") or [])], file=sys.stderr)
+assets = data.get("assets") or []
+def pick(prefix):
+    for a in assets:
+        name = a.get("name") or ""
+        if name.startswith(prefix) and name.endswith(needle):
+            return a
+    return None
+chosen = pick("edge_") or pick("ws-edge_")
+if chosen:
+    if use_api:
+        print(chosen["url"])
+    else:
+        print(chosen["browser_download_url"])
+    sys.exit(0)
+print("available assets:", [a.get("name") for a in assets], file=sys.stderr)
 sys.exit(1)
 ' <<<"${json}"
 )" || {
