@@ -2,6 +2,14 @@
 
 Customer guide for Ubuntu 24.04 LTS (and similar Debian-based hosts). No Windsor or Task required.
 
+Everything lives under one **home directory** (`EDGE_HOME`):
+
+```text
+~/PorticoEdge/
+  bin/edge     # the application
+  data/        # agent state, WireGuard, logs
+```
+
 ## 1. Prerequisites
 
 ```bash
@@ -9,53 +17,77 @@ sudo apt update
 sudo apt install -y wireguard wireguard-tools dnsmasq nftables iptables curl
 ```
 
-Kernel WireGuard is used on Linux (no userspace `wg-quick` tunnel required for the home interface). Identify your LAN NIC (often `eth0`, `enp*`, or `wlp*`):
+Kernel WireGuard is used on Linux. Identify your LAN NIC (often `eth0`, `enp*`, or `wlp*`):
 
 ```bash
 ip -br link
 ```
 
-You will set `VPN_LAN_INTERFACE` to that name when running Edge.
+You will pass that name to `edge install --lan-interface`.
 
-## 2. Download
+## 2. Create your Edge home
+
+Expand `$HOME` **before** any `sudo` (sudo may change home):
+
+```bash
+export EDGE_HOME="${HOME}/PorticoEdge"
+mkdir -p "${EDGE_HOME}/bin" "${EDGE_HOME}/data"
+```
+
+## 3. Get the binary into `bin/`
 
 **Option A — helper script**
 
 ```bash
-curl -fsSL -o install-edge.sh \
+curl -fsSL -o /tmp/install-edge.sh \
   https://web.porticoworks.dev/install.sh
-chmod +x install-edge.sh
-sudo ./install-edge.sh -o /usr/local/bin
+chmod +x /tmp/install-edge.sh
+/tmp/install-edge.sh -o "${EDGE_HOME}/bin"
 ```
 
 **Option B — manual**
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
 2. Download `edge_*_linux_amd64.tar.gz` or `edge_*_linux_arm64.tar.gz`
-3. Install the binary:
+3. Extract into `bin/`:
 
 ```bash
-tar -xzf edge_*_linux_*.tar.gz
-chmod +x edge
-sudo mv edge /usr/local/bin/edge
+tar -xzf edge_*_linux_*.tar.gz -C "${EDGE_HOME}/bin"
+chmod +x "${EDGE_HOME}/bin/edge"
 ```
 
-## 3. Run (foreground)
+## 4. Always-on — `edge install`
+
+Installs packages if needed, writes `/etc/default/edge` with `EDGE_DATA_DIR=$EDGE_HOME/data`, places/keeps the binary at `$EDGE_HOME/bin/edge`, and enables a systemd unit with `CAP_NET_ADMIN`:
 
 ```bash
-export EDGE_DATA_DIR="${HOME}/.edge"
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --lan-interface eth0
+"${EDGE_HOME}/bin/edge" doctor
+```
+
+Change `eth0` to your NIC. Optional flags: `--dry-run`, `--no-split-dns`, `--pme-server-url URL`, `--listen-addr 0.0.0.0:9191`.
+
+Open `http://<host-ip>:9191` (printed at the end of install).
+
+```bash
+sudo "${EDGE_HOME}/bin/edge" uninstall --prefix "${EDGE_HOME}"
+# sudo "${EDGE_HOME}/bin/edge" uninstall --purge --prefix "${EDGE_HOME}"
+```
+
+## 5. Foreground (optional)
+
+Without systemd (debug / temporary):
+
+```bash
+export EDGE_DATA_DIR="${EDGE_HOME}/data"
 export PME_RELAY_ENABLED=true
 export VPN_LAN_INTERFACE=eth0   # change to your NIC
-edge run
+"${EDGE_HOME}/bin/edge" run
 ```
 
-If you see permission errors creating WireGuard interfaces or binding DNS, run under systemd with capabilities (next section) or temporarily with `sudo` while keeping `EDGE_DATA_DIR` under your home:
+## 6. Register
 
-```bash
-sudo EDGE_DATA_DIR="${HOME}/.edge" PME_RELAY_ENABLED=true VPN_LAN_INTERFACE=eth0 edge run
-```
-
-Open **http://127.0.0.1:9191** on the host (or SSH tunnel if headless).
+Open **http://127.0.0.1:9191** (or the host IP from install):
 
 1. Set **PME Server URL** to `https://pme.pmenetwork.com`
 2. Sign in with your PME account
@@ -63,37 +95,16 @@ Open **http://127.0.0.1:9191** on the host (or SSH tunnel if headless).
 4. Confirm relay connected when entitled
 5. Create an invite under **Invitations**
 
-```bash
-edge doctor
-```
-
-## 4. Always-on — `edge install`
-
-After the binary is on the machine (section 2), let Edge install itself: packages, `/etc/default/edge`, and a systemd unit with `CAP_NET_ADMIN`:
-
-```bash
-sudo edge install --lan-interface eth0   # change to your NIC
-edge doctor
-```
-
-Optional flags: `--dry-run`, `--no-split-dns`, `--pme-server-url URL`, `--data-dir DIR`. Existing `/etc/default/edge` keys are kept (only missing customer defaults are filled).
-
-Open `http://<host-ip>:9191` (printed at the end of install). The unit file is embedded in the binary; you do not need the release archive's `packaging/` directory.
-
-```bash
-sudo edge uninstall          # stop/disable unit; keep data and env
-sudo edge uninstall --purge  # also remove env, binary, and data dir
-```
-
 Several Homes on one host: install `packaging/systemd/edge@.service` and use `/etc/default/edge-<name>` with `systemctl enable --now edge@garage`. Homelab Incus: [INCUS.md](./INCUS.md).
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| `Operation not permitted` creating WG iface | Run `sudo edge install` so the systemd unit has `CAP_NET_ADMIN`, or run with sufficient privileges |
-| Wrong LAN / no NAT | Set `VPN_LAN_INTERFACE` to the interface that reaches your router |
-| `dnsmasq` / port 53 busy | Stop conflicting resolvers or let Edge manage dnsmasq; check `ss -ulnp \| grep :53` |
-| Relay disconnected | `PME_RELAY_ENABLED=true` in env or `/etc/default/edge`; trial or Mesh Pro on account |
+| `Operation not permitted` creating WG iface | Use `sudo … install --prefix` so the unit has `CAP_NET_ADMIN` |
+| Wrong LAN / no NAT | Set `--lan-interface` / `VPN_LAN_INTERFACE` to the NIC that reaches your router |
+| `dnsmasq` / port 53 busy | Stop conflicting resolvers; check `ss -ulnp \| grep :53` |
+| Relay disconnected | `PME_RELAY_ENABLED=true` in `/etc/default/edge`; trial or Mesh Pro on account |
+| `--prefix` rejected | Use an absolute path; `export EDGE_HOME="$HOME/PorticoEdge"` before `sudo` |
 
 More: website `/troubleshooting/#install`.

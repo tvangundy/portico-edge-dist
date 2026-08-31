@@ -4,6 +4,21 @@ Download a pre-built binary from [GitHub Releases](https://github.com/tvangundy/
 
 Public onboarding (checklist, troubleshooting) lives on the [download page](https://web.porticoworks.dev/download/).
 
+## Layout
+
+Pick one directory as your Edge home. Keep the binary and all agent data there:
+
+```text
+~/PorticoEdge/
+  bin/edge
+  data/
+```
+
+```bash
+export EDGE_HOME="${HOME}/PorticoEdge"
+mkdir -p "${EDGE_HOME}/bin" "${EDGE_HOME}/data"
+```
+
 ## Release assets
 
 Archives are named:
@@ -25,15 +40,20 @@ Each archive includes the `edge` binary, these install docs, `install-edge.sh`, 
 ## Quick install (script)
 
 ```bash
-curl -fsSL -o install-edge.sh \
+export EDGE_HOME="${HOME}/PorticoEdge"
+mkdir -p "${EDGE_HOME}/bin" "${EDGE_HOME}/data"
+
+curl -fsSL -o /tmp/install-edge.sh \
   https://web.porticoworks.dev/install.sh
-chmod +x install-edge.sh
-./install-edge.sh -o .
-sudo ./edge install   # Linux: packages + systemd (see UBUNTU.md)
-# or: ./edge run      # foreground
+chmod +x /tmp/install-edge.sh
+/tmp/install-edge.sh -o "${EDGE_HOME}/bin"
+
+# Always-on (macOS LaunchDaemon / Linux systemd):
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}"
+# Linux: add --lan-interface eth0 (your NIC from ip -br link)
 ```
 
-Or after downloading a release archive, use the bundled `install-edge.sh` with `-t vX.Y.Z`.
+Or after downloading a release archive, extract into `${EDGE_HOME}/bin` (or use the bundled `install-edge.sh` with `-t vX.Y.Z`).
 
 ## Guides
 
