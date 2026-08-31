@@ -77,7 +77,7 @@ Defaults (filled only when missing in `/etc/default/edge`):
 | `PME_RELAY_ENABLED` | `true` |
 | `VPN_LAN_INTERFACE` | `en0` |
 | `PME_AGENT_UI_LISTEN_ADDR` | `127.0.0.1:9191` |
-| `PME_SERVER_URL` | `https://pme.pmenetwork.com` |
+| `PME_SERVER_URL` | `https://api.porticoworks.dev` |
 
 Validate:
 
@@ -90,7 +90,7 @@ sudo launchctl print system/com.portico.edge | head -20
 
 Open **http://127.0.0.1:9191**
 
-1. Set **PME Server URL** to `https://pme.pmenetwork.com` (if not already)
+1. Set **PME Server URL** to `https://api.porticoworks.dev` (if not already)
 2. Sign in with your PME account
 3. Tap **Register with PME Server**
 4. Confirm the dashboard shows relay connected (when entitled)

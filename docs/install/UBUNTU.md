@@ -91,7 +91,7 @@ export VPN_LAN_INTERFACE=eth0   # change to your NIC
 
 Open **http://127.0.0.1:9191** (or the host IP from install):
 
-1. Set **PME Server URL** to `https://pme.pmenetwork.com`
+1. Set **PME Server URL** to `https://api.porticoworks.dev`
 2. Sign in with your PME account
 3. Tap **Register with PME Server**
 4. Confirm relay connected when entitled

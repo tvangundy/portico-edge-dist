@@ -8,7 +8,7 @@ This is the always-on Linux path the in-guest `edge install` engine was proven o
 
 - Incus on the host (`incus version`)
 - A default profile with a NIC (usually `eth0`)
-- Network access from the container to GitHub (release download happens on the host) and to `https://pme.pmenetwork.com`
+- Network access from the container to GitHub (release download happens on the host) and to `https://api.porticoworks.dev`
 
 The helper launches a **privileged** Ubuntu 24.04 container (`security.privileged=true`) so WireGuard and `CAP_NET_ADMIN` work.
 
@@ -37,7 +37,7 @@ The helper:
 3. Pushes it to `/usr/local/bin/edge`
 4. Runs `edge install` inside the guest (packages, `/etc/default/edge`, systemd)
 
-Open the printed **Agent UI** URL (`http://<container-ip>:9191`), set **PME Server URL** to `https://pme.pmenetwork.com`, sign in, and register.
+Open the printed **Agent UI** URL (`http://<container-ip>:9191`), set **PME Server URL** to `https://api.porticoworks.dev`, sign in, and register.
 
 ```bash
 incus exec portico-edge -- edge doctor
