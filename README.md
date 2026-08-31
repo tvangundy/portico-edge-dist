@@ -43,4 +43,4 @@ GitHub always lists **Source code** zip/tar.gz on the same page. Those are a sna
 
 ## Maintainers
 
-Install scripts here are mirrored from the private Portico Edge source repo. After editing `scripts/install-edge.sh` (or customer `docs/install/`) there, run `task edge:sync-dist`. A `v*` tag on that source repo publishes binaries to this repo’s Releases (Goreleaser). `REPO_ACCESS` needs `contents:write` on this repository.
+Install scripts here are mirrored from the private Portico Edge source repo. After editing `scripts/install-edge.sh` (or customer `docs/install/`) there, run `task edge:sync-dist`. A `v*` tag on that source repo publishes binaries to this repo’s Releases (Goreleaser). After assets land, CI writes [`latest.json`](latest.json) (`tag` + `version`) so [web.porticoworks.dev/download](https://web.porticoworks.dev/download/) can show the current archive names without a website rebuild. `REPO_ACCESS` needs `contents:write` on this repository.
