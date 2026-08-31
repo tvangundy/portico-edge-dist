@@ -63,11 +63,11 @@ chmod +x "${EDGE_HOME}/bin/edge"
 Installs packages if needed, writes `/etc/default/edge` with `EDGE_DATA_DIR=$EDGE_HOME/data`, places/keeps the binary at `$EDGE_HOME/bin/edge`, and enables a systemd unit with `CAP_NET_ADMIN`:
 
 ```bash
-sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --lan-interface eth0
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-interface eth0 --port next
 "${EDGE_HOME}/bin/edge" doctor
 ```
 
-Change `eth0` to your NIC. Optional flags: `--dry-run`, `--no-split-dns`, `--pme-server-url URL`, `--listen-addr 0.0.0.0:9191`.
+Change `eth0` to your NIC. Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--no-split-dns`, `--pme-server-url URL`, `--listen-addr 0.0.0.0:9191`.
 
 Open `http://<host-ip>:9191` (printed at the end of install).
 

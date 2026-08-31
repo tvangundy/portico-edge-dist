@@ -64,10 +64,10 @@ xattr -d com.apple.quarantine "${EDGE_HOME}/bin/edge" 2>/dev/null || true
 `edge install --prefix` copies/keeps the binary at `$EDGE_HOME/bin/edge`, sets `EDGE_DATA_DIR` to `$EDGE_HOME/data`, writes `/etc/default/edge`, and installs a **root** LaunchDaemon (`com.portico.edge`).
 
 ```bash
-sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}"
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --port next
 ```
 
-Optional flags: `--dry-run`, `--no-split-dns`, `--lan-interface en0`, `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
+Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--no-split-dns`, `--lan-interface en0`, `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
 
 Defaults (filled only when missing in `/etc/default/edge`):
 
