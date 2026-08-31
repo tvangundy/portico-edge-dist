@@ -75,6 +75,7 @@ Defaults (filled only when missing in `/etc/default/edge`):
 |-----|-----------------|
 | `EDGE_DATA_DIR` | `$EDGE_HOME/data` |
 | `PME_RELAY_ENABLED` | `true` |
+| `PME_UI_APP_SHARING` | `true` |
 | `VPN_LAN_INTERFACE` | `en0` |
 | `PME_AGENT_UI_LISTEN_ADDR` | `127.0.0.1:9191` |
 | `PME_SERVER_URL` | `https://api.porticoworks.dev` |
@@ -94,7 +95,7 @@ Open **http://127.0.0.1:9191**
 2. Sign in with your PME account
 3. Tap **Register with PME Server**
 4. Confirm the dashboard shows relay connected (when entitled)
-5. Create an invite under **Invitations**
+5. Create an invite under **Invitations** (pick apps/things to share; they stay off until you check them)
 
 ## 6. Uninstall
 
