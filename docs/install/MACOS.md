@@ -79,6 +79,11 @@ Defaults (filled only when missing in `/etc/default/edge`):
 | `VPN_LAN_INTERFACE` | `en0` |
 | `PME_AGENT_UI_LISTEN_ADDR` | `127.0.0.1:9191` |
 | `PME_SERVER_URL` | `https://api.porticoworks.dev` |
+| `SHAREALIST_ENABLED` | `true` |
+| `PORTICO_HOME_UI` | `lists` |
+| `PORTICO_LISTS_URL` | `http://10.8.0.1:<ui-port>/` |
+| `SHAREALIST_JWT_SECRET` | generated on first install |
+| `PME_APP_TICKET_SECRET` | generated on first install |
 
 Validate:
 
@@ -89,7 +94,7 @@ sudo launchctl print system/com.portico.edge | head -20
 
 ## 5. Register
 
-Open **http://127.0.0.1:9191**
+Open **http://127.0.0.1:9191/host** for the agent console (invites, register). ShareAList is **http://127.0.0.1:9191/**. From Lists, the Home pill returns to `/host`.
 
 1. Set **PME Server URL** to `https://api.porticoworks.dev` (if not already)
 2. Sign in with your PME account

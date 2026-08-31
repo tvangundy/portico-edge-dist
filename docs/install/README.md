@@ -67,7 +67,7 @@ Or after downloading a release archive, extract into `${EDGE_HOME}/bin` (or use 
 
 ## After install
 
-1. Open **http://127.0.0.1:9191**
+1. Open **http://127.0.0.1:9191/host** (agent) and **http://127.0.0.1:9191/** (ShareAList)
 2. Set **PME Server URL** to `https://api.porticoworks.dev`
 3. Sign in with your PME account → **Register with PME Server**
 4. Enable relay: start Edge with `PME_RELAY_ENABLED=true` (trial or Mesh Pro)

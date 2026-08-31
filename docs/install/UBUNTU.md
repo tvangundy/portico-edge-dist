@@ -89,7 +89,7 @@ export VPN_LAN_INTERFACE=eth0   # change to your NIC
 
 ## 6. Register
 
-Open **http://127.0.0.1:9191** (or the host IP from install):
+Open **http://127.0.0.1:9191/host** (agent console) or **http://127.0.0.1:9191/** (ShareAList):
 
 1. Set **PME Server URL** to `https://api.porticoworks.dev`
 2. Sign in with your PME account
