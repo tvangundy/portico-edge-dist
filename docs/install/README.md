@@ -21,6 +21,8 @@ mkdir -p "${EDGE_HOME}/bin" "${EDGE_HOME}/data"
 
 ## Release assets
 
+Use **`edge_{Version}_{Os}_{Arch}.tar.gz`** from the release **Assets** list. GitHub always also shows **Source code** zip/tar.gz — those are this dist repo (docs/scripts), not the Edge binary.
+
 Archives are named:
 
 ```text

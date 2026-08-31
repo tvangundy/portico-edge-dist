@@ -1,0 +1,6 @@
+# GitHub always lists “Source code” zip/tar.gz on Releases (cannot be hidden).
+# Those archives are git-archive of this dist repo, not the Edge binary.
+# Keep them to README + LICENSE so they cannot be mistaken for an install.
+* export-ignore
+/README.md -export-ignore
+/LICENSE -export-ignore

@@ -45,14 +45,16 @@ chmod +x /tmp/install-edge.sh
 /tmp/install-edge.sh -o "${EDGE_HOME}/bin"
 ```
 
-**Option B — manual**
+**Option B — curl the binary asset**
 
-1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
-2. Download `edge_*_linux_amd64.tar.gz` or `edge_*_linux_arm64.tar.gz`
-3. Extract into `bin/` (use the directory where the browser saved the file):
+On the GitHub release, use an **`edge_*_linux_amd64.tar.gz`** (or `linux_arm64`) link under **Assets**. Do **not** use **Source code** zip/tar.gz.
 
 ```bash
-tar -xzf ~/Downloads/edge_*_linux_*.tar.gz -C "${EDGE_HOME}/bin"
+curl -fsSL -o /tmp/edge.tgz "PASTE_ASSET_URL"
+rm -rf /tmp/portico-edge-extract
+mkdir -p /tmp/portico-edge-extract "${EDGE_HOME}/bin"
+tar -xzf /tmp/edge.tgz -C /tmp/portico-edge-extract
+cp /tmp/portico-edge-extract/edge "${EDGE_HOME}/bin/edge"
 chmod +x "${EDGE_HOME}/bin/edge"
 ```
 

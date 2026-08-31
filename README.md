@@ -31,6 +31,8 @@ Onboarding checklist: [web.porticoworks.dev/download](https://web.porticoworks.d
 
 Archives are named `edge_{Version}_{Os}_{Arch}.tar.gz` (linux/darwin/windows, amd64/arm64). Each archive includes the `edge` binary, these install docs, and optional service templates under `packaging/`.
 
+GitHub always lists **Source code** zip/tar.gz on the same page. Those are a snapshot of this dist repo (docs/scripts), **not** the Edge binary — do not install from them.
+
 ## Docs
 
 | Platform | Guide |
