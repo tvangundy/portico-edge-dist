@@ -2,6 +2,8 @@
 
 Customer guide — no Windsor or Task required. More troubleshooting: [website /troubleshooting/#install](https://web.porticoworks.dev/troubleshooting/#install).
 
+A signed `.pkg` installer is planned next. Until then, use **`sudo edge install`** (root LaunchDaemon) after downloading the binary.
+
 ## 1. Prerequisites
 
 ```bash
@@ -21,95 +23,80 @@ Use an always-on Mac on your LAN (Mac mini recommended). Note your chip:
 curl -fsSL -o install-edge.sh \
   https://web.porticoworks.dev/install.sh
 chmod +x install-edge.sh
-./install-edge.sh -o "$HOME/bin"   # or another directory on your PATH
+./install-edge.sh -o /tmp/edge-download
 ```
 
 **Option B — manual**
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
 2. Download `edge_*_darwin_arm64.tar.gz` or `edge_*_darwin_amd64.tar.gz`
-3. Extract and place the `edge` binary somewhere on your PATH:
+3. Extract:
 
 ```bash
 tar -xzf edge_*_darwin_*.tar.gz
 chmod +x edge
 # If macOS blocks the binary (Gatekeeper):
 xattr -d com.apple.quarantine edge 2>/dev/null || true
-sudo mv edge /usr/local/bin/edge
 ```
 
-## 3. One-time sudoers (WireGuard, dnsmasq, pf)
+## 3. Install (LaunchDaemon)
 
-Edge runs as your user and calls `sudo -n` for WireGuard, dnsmasq (port 53), pf, routes, and sysctl. Run once:
+`edge install` copies the binary to `/usr/local/bin/edge`, writes `/etc/default/edge`, installs a **root** LaunchDaemon (`com.portico.edge`), and starts it. No sudoers file is required for the customer path.
 
 ```bash
-MAC_USER="$(whoami)"
-WG="$(command -v wg)"
-DNSMASQ="$(command -v dnsmasq)"
-test -n "${WG}" && test -n "${DNSMASQ}" || { echo "install: brew install wireguard-tools dnsmasq"; exit 1; }
-
-echo "Installing sudoers for ${MAC_USER}"
-echo "  wg:      ${WG}"
-echo "  dnsmasq: ${DNSMASQ}"
-
-sudo tee /etc/sudoers.d/edge <<EOF
-# PME Edge — passwordless wg, dnsmasq, pf
-${MAC_USER} ALL=(root) NOPASSWD: ${WG}, ${DNSMASQ}, /sbin/pfctl, /usr/sbin/sysctl, /bin/cp, /bin/cat, /bin/kill, /sbin/route
-EOF
-sudo chmod 440 /etc/sudoers.d/edge
-sudo visudo -c -f /etc/sudoers.d/edge
+# From the extract dir or /tmp/edge-download:
+sudo ./edge install
+# or, if already on PATH:
+sudo edge install
 ```
+
+Optional flags: `--dry-run`, `--no-split-dns`, `--lan-interface en0`, `--pme-server-url URL`, `--data-dir DIR`, `--listen-addr 127.0.0.1:9191`.
+
+Defaults (filled only when missing in `/etc/default/edge`):
+
+| Key | Default |
+|-----|---------|
+| `EDGE_DATA_DIR` | `/Library/Application Support/PorticoEdge` |
+| `PME_RELAY_ENABLED` | `true` |
+| `VPN_LAN_INTERFACE` | `en0` |
+| `PME_AGENT_UI_LISTEN_ADDR` | `127.0.0.1:9191` |
+| `PME_SERVER_URL` | `https://pme.pmenetwork.com` |
 
 Validate:
 
 ```bash
-sudo -n wg show
-sudo -n /sbin/pfctl -s info | head -1
+edge doctor
+sudo launchctl print system/com.portico.edge | head -20
 ```
 
-If `sudo -n` asks for a password, re-check paths (`which wg`, `which dnsmasq`). Intel Macs often use `/usr/local/...` instead of `/opt/homebrew/...`.
-
-## 4. Run
-
-```bash
-export EDGE_DATA_DIR="${HOME}/.edge"
-export PME_RELAY_ENABLED=true   # 30-day trial or Mesh Pro
-edge run
-```
+## 4. Register
 
 Open **http://127.0.0.1:9191**
 
-1. Set **PME Server URL** to `https://pme.pmenetwork.com`
+1. Set **PME Server URL** to `https://pme.pmenetwork.com` (if not already)
 2. Sign in with your PME account
 3. Tap **Register with PME Server**
 4. Confirm the dashboard shows relay connected (when entitled)
 5. Create an invite under **Invitations**
 
-Optional checks:
+## 5. Uninstall
 
 ```bash
-edge doctor
+sudo edge uninstall          # stop/unload LaunchDaemon; keep env and data
+sudo edge uninstall --purge  # also remove env, binary, data dir
 ```
 
-## 5. Optional — launchd (always-on)
+## Operator / foreground (optional)
 
-The release archive includes `packaging/launchd/com.portico.edge.plist`. After installing `edge` to `/usr/local/bin/edge`:
-
-```bash
-# Add EnvironmentVariables for EDGE_DATA_DIR and PME_RELAY_ENABLED in the plist, then:
-sudo cp packaging/launchd/com.portico.edge.plist /Library/LaunchDaemons/
-sudo launchctl load /Library/LaunchDaemons/com.portico.edge.plist
-```
-
-Prefer a user LaunchAgent if you want Edge to run only when you are logged in. Several Homes on one Mac: unique labels such as `com.portico.edge.cabin` and separate data directories.
+For Windsor fleet work on a laptop (`task edge:run`), you may still use a user session + passwordless sudoers — see the operator [macOS runbook](../runbooks/edge/MACOS.md). That path is not required for household install.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
 | “damaged” / cannot open | `xattr -d com.apple.quarantine edge` |
-| Permission denied on port 53 / pf | Re-run sudoers block; confirm Homebrew paths |
-| UI not loading | Confirm `edge run` is still running; try `http://127.0.0.1:9191` |
-| Relay disconnected | Ensure `PME_RELAY_ENABLED=true` and account has trial or Mesh Pro |
+| missing `wg` / `dnsmasq` | `brew install wireguard-tools dnsmasq` |
+| UI not loading | `edge doctor`; check `sudo tail -f "/Library/Application Support/PorticoEdge/launchd.err.log"` |
+| Relay disconnected | Ensure `PME_RELAY_ENABLED=true` in `/etc/default/edge` and account has trial or Mesh Pro |
 
 More: website `/troubleshooting/#install`.
