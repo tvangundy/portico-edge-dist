@@ -49,10 +49,10 @@ chmod +x /tmp/install-edge.sh
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
 2. Download `edge_*_linux_amd64.tar.gz` or `edge_*_linux_arm64.tar.gz`
-3. Extract into `bin/`:
+3. Extract into `bin/` (use the directory where the browser saved the file):
 
 ```bash
-tar -xzf edge_*_linux_*.tar.gz -C "${EDGE_HOME}/bin"
+tar -xzf ~/Downloads/edge_*_linux_*.tar.gz -C "${EDGE_HOME}/bin"
 chmod +x "${EDGE_HOME}/bin/edge"
 ```
 

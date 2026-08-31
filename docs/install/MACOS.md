@@ -47,10 +47,10 @@ chmod +x /tmp/install-edge.sh
 
 1. Open [Portico Edge releases](https://github.com/tvangundy/portico-edge-dist/releases/latest)
 2. Download `edge_*_darwin_arm64.tar.gz` or `edge_*_darwin_amd64.tar.gz`
-3. Extract into `bin/`:
+3. Extract into `bin/` (browser default save location is `~/Downloads`):
 
 ```bash
-tar -xzf edge_*_darwin_*.tar.gz -C "${EDGE_HOME}/bin"
+tar -xzf ~/Downloads/edge_*_darwin_*.tar.gz -C "${EDGE_HOME}/bin"
 chmod +x "${EDGE_HOME}/bin/edge"
 xattr -d com.apple.quarantine "${EDGE_HOME}/bin/edge" 2>/dev/null || true
 ```
@@ -116,6 +116,7 @@ Operator Windsor fleet path (`task edge:run`) remains separate — see [macOS ru
 
 | Symptom | Fix |
 |---------|-----|
+| `tar: …tar.gz: m: No such file or directory` | macOS bsdtar wording for “archive not found”. Pass the full path (usually `~/Downloads/edge_*.tar.gz`) or `cd` there first. Prefer Option A. |
 | “damaged” / cannot open | `xattr -d com.apple.quarantine "${EDGE_HOME}/bin/edge"` |
 | missing `wg` / `dnsmasq` | `brew install wireguard-tools dnsmasq` |
 | UI not loading | `"${EDGE_HOME}/bin/edge" doctor`; `sudo tail -f "${EDGE_HOME}/data/launchd.err.log"` |
