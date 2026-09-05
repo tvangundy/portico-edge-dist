@@ -64,10 +64,22 @@ xattr -d com.apple.quarantine "${EDGE_HOME}/bin/edge" 2>/dev/null || true
 `edge install --prefix` copies/keeps the binary at `$EDGE_HOME/bin/edge`, sets `EDGE_DATA_DIR` to `$EDGE_HOME/data`, writes `/etc/default/edge`, and installs a **root** LaunchDaemon (`com.portico.edge`).
 
 ```bash
-sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --port next
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-subnet 192.168.1.0/24 --port next
 ```
 
-Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--no-split-dns`, `--lan-interface en0`, `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
+Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--name NAME` (multi-Home: `com.portico.edge.NAME` + `/etc/default/edge-NAME`; prefer `task edge:new -- --target prefix` for fleet), `--no-split-dns`, `--lan-interface en0`, `--lan-subnet CIDR` (home LAN for VPN AllowedIPs; default `192.168.2.0/24`), `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
+
+### Multiple Homes on one Mac
+
+Household install omits `--name` (singleton `com.portico.edge`). For several always-on agents with different UI ports, use the fleet factory:
+
+```bash
+task edge:new -- --name lab1 --target prefix --stage test
+windsor set context test-lab1-edge && task edge:up
+task edge:list
+```
+
+Or pass `--name` + `--prefix` + `--port` to `edge install` directly (lab/CI).
 
 Defaults (filled only when missing in `/etc/default/edge`):
 

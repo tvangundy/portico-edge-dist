@@ -51,7 +51,7 @@ chmod +x /tmp/install-edge.sh
 /tmp/install-edge.sh -o "${EDGE_HOME}/bin"
 
 # Always-on (macOS LaunchDaemon / Linux systemd):
-sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --port next
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-subnet 192.168.1.0/24 --port next
 # Linux: add --lan-interface eth0 (your NIC from ip -br link)
 ```
 

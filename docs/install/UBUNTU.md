@@ -63,11 +63,15 @@ chmod +x "${EDGE_HOME}/bin/edge"
 Installs packages if needed, writes `/etc/default/edge` with `EDGE_DATA_DIR=$EDGE_HOME/data`, places/keeps the binary at `$EDGE_HOME/bin/edge`, and enables a systemd unit with `CAP_NET_ADMIN`:
 
 ```bash
-sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-interface eth0 --port next
+sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-interface eth0 --lan-subnet 192.168.1.0/24 --port next
 "${EDGE_HOME}/bin/edge" doctor
 ```
 
-Change `eth0` to your NIC. Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--no-split-dns`, `--pme-server-url URL`, `--listen-addr 0.0.0.0:9191`.
+Change `eth0` to your NIC and `--lan-subnet` to your home LAN (e.g. `192.168.1.0/24`, `10.0.0.0/24`; default `192.168.2.0/24` if omitted). Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--name NAME` (multi-Home: `edge-NAME.service` + `/etc/default/edge-NAME`; prefer `task edge:new -- --target prefix` for fleet), `--no-split-dns`, `--pme-server-url URL`, `--listen-addr 0.0.0.0:9191`.
+
+### Multiple Homes on one host
+
+Omit `--name` for the household singleton (`edge.service`). For N agents with distinct ports, use the fleet factory (`--target prefix` or `--target systemd`) — see [FLEET.md](../runbooks/edge/FLEET.md).
 
 Open `http://<host-ip>:9191` (printed at the end of install).
 
@@ -104,7 +108,7 @@ Several Homes on one host: install `packaging/systemd/edge@.service` and use `/e
 | Symptom | Fix |
 |---------|-----|
 | `Operation not permitted` creating WG iface | Use `sudo … install --prefix` so the unit has `CAP_NET_ADMIN` |
-| Wrong LAN / no NAT | Set `--lan-interface` / `VPN_LAN_INTERFACE` to the NIC that reaches your router |
+| Wrong LAN / no NAT | Set `--lan-interface` / `VPN_LAN_INTERFACE` to the NIC that reaches your router; set `--lan-subnet` / `VPN_LAN_SUBNET` to your home LAN CIDR |
 | `dnsmasq` / port 53 busy | Stop conflicting resolvers; check `ss -ulnp \| grep :53` |
 | Relay disconnected | `PME_RELAY_ENABLED=true` in `/etc/default/edge`; trial or Mesh Pro on account |
 | `--prefix` rejected | Use an absolute path; `export EDGE_HOME="$HOME/PorticoEdge"` before `sudo` |
