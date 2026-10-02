@@ -2,7 +2,7 @@
 
 Download a pre-built binary from [GitHub Releases](https://github.com/tvangundy/portico-edge-dist/releases/latest), then follow the guide for your OS.
 
-Public onboarding (checklist, troubleshooting) lives on the [download page](https://web.porticoworks.dev/download/).
+Public onboarding (checklist, troubleshooting) lives on [Getting Started](https://web.porticoworks.dev/get-started/#install-edge) and [Troubleshooting](https://web.porticoworks.dev/troubleshooting/#install).
 
 ## Layout
 
