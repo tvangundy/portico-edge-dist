@@ -67,9 +67,9 @@ xattr -d com.apple.quarantine "${EDGE_HOME}/bin/edge" 2>/dev/null || true
 sudo "${EDGE_HOME}/bin/edge" install --prefix "${EDGE_HOME}" --add-to-path --lan-subnet 192.168.1.0/24 --port next
 ```
 
-Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--name NAME` (multi-Home: `com.portico.edge.NAME` + `/etc/default/edge-NAME`; prefer `task edge:new -- --target prefix` for fleet), `--no-split-dns`, `--lan-interface en0`, `--lan-subnet CIDR` (home LAN for VPN AllowedIPs; default `192.168.2.0/24`), `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
+Optional flags: `--dry-run`, `--add-to-path` (symlink `/usr/local/bin/edge`), `--port 9191` or `--port next` (first free TCP port from 9191), `--name NAME` (multi-agent: `com.portico.edge.NAME` + `/etc/default/edge-NAME`; prefer `task edge:new -- --target prefix` for fleet), `--no-split-dns`, `--lan-interface en0`, `--lan-subnet CIDR` (home LAN for VPN AllowedIPs; default `192.168.2.0/24`), `--pme-server-url URL`, `--listen-addr 127.0.0.1:9191`.
 
-### Multiple Homes on one Mac
+### Multiple agents on one Mac
 
 Household install omits `--name` (singleton `com.portico.edge`). For several always-on agents with different UI ports, use the fleet factory:
 
@@ -106,7 +106,7 @@ sudo launchctl print system/com.portico.edge | head -20
 
 ## 5. Register
 
-Open **http://127.0.0.1:9191/host** for the agent console (invites, register). ShareAList is **http://127.0.0.1:9191/**. From Lists, the Home pill returns to `/host`.
+Open **http://127.0.0.1:9191/host** for the agent console (invites, register). ShareAList is **http://127.0.0.1:9191/**. From Lists, the Agent pill returns to `/host`.
 
 1. Set **PME Server URL** to `https://api.porticoworks.dev` (if not already)
 2. Sign in with your PME account
